@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تصويت مرشحي سيدي غازي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to right, #f1f1f1, #e0f7fa);
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      text-align: center;
+    }
+
+    h1 {
+      background-color: #00796b;
+      color: white;
+      padding: 20px;
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .candidate {
+      background-color: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .candidate:hover {
+      transform: scale(1.02);
+    }
+
+    .candidate h3 {
+      margin-bottom: 10px;
+      color: #00796b;
+    }
+
+    .candidate p {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .candidate button {
+      margin-top: 15px;
+      padding: 10px 25px;
+      font-size: 16px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .candidate button:hover:not(:disabled) {
+      background-color: #004d40;
+    }
+
+    .candidate button:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+
+    .winner {
+      margin-top: 30px;
+      font-size: 20px;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .check-winner-btn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .check-winner-btn:hover {
+      background-color: #0277bd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>صوّت لمرشحك لمجلس النواب - سيدي غازي والعزب المجاورة</h1>
+
+  <div class="container" id="candidates"></div>
+
+  <button class="check-winner-btn" onclick="showWinner()">عرض المتصدر</button>
+
+  <div class="winner" id="winner"></div>
+
+  <script>
+    const candidates = {
+      "طه حسين قناوي": 0,
+      "خميس جمعه الخولي": 0,
+      "رمضان عياد المغازي": 0
+    };
+
+    const container = document.getElementById("candidates");
+
+    function hasVoted() {
+      return localStorage.getItem("votedCandidate") !== null;
+    }
+
+    function getVotedName() {
+      return localStorage.getItem("votedCandidate");
+    }
+
+    function renderCandidates() {
+      container.innerHTML = "";
+      const voted = hasVoted();
+      const votedName = getVotedName();
+
+      for (let name in candidates) {
+        const div = document.createElement("div");
+        div.className = "candidate";
+        div.innerHTML = `
+          <h3>${name}</h3>
+          <p>عدد الأصوات: ${candidates[name]}</p>
+          <button onclick="vote('${name}')" ${voted ? "disabled" : ""}>
+            ${voted ? (votedName === name ? "لقد صوّت لهذا المرشح" : "تم التصويت") : "صوّت الآن"}
+          </button>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function vote(name) {
+      if (hasVoted()) {
+        alert("لقد قمت بالتصويت مسبقًا.");
+        return;
+      }
+      candidates[name]++;
+      localStorage.setItem("votedCandidate", name);
+      alert(`تم التصويت لـ ${name}`);
+      renderCandidates();
+    }
+
+    function showWinner() {
+      let maxVotes = -1;
+      let topCandidate = "";
+      for (let name in candidates) {
+        if (candidates[name] > maxVotes) {
+          maxVotes = candidates[name];
+          topCandidate = name;
+        }
+      }
+      document.getElementById("winner").innerText =
+        `💡 المرشح المتصدر حاليًا: ${topCandidate} بعدد ${candidates[topCandidate]} صوت`;
+    }
+
+    renderCandidates();
+  </script>
+
+</body>
+</html>
